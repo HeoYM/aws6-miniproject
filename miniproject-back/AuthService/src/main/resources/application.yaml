@@ -1,0 +1,10 @@
+spring:
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/authservice # MongoDB 연결 문자열
+  security:
+    user:
+      password: # 비밀번호를 따로 설정할 경우
+  jwt:
+    secret: your_jwt_secret_key # JWT 비밀키
+    expiration: 3600000 # JWT 만료 시간 (예: 1시간 = 3600000ms)
