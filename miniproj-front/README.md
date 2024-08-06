@@ -1,89 +1,37 @@
 # 디렉토리 구조
 
 ```
-my-react-app/
-│
+ miniproj-front/
+├── build/
+├── node_modules/
 ├── public/
-│   └── index.html
-│
 ├── src/
-│   ├── components/
-│   │   ├── Header.js
-│   │   ├── Footer.js
-│   │   ├── MainContent.js
-│   │   └── GetJsonComp.js
 │   │
-│   ├── pages/
-│   │   ├── HomePage.js
-│   │   └── AboutPage.js
+│   ├── components/
+│   │   ├── css/
+│   │   │   ├── App.module.css
+│   │   │   ├── Footer.module.css
+│   │   │   ├── Header.module.css
+│   │   │   ├── index.module.css
+│   │   │   ├── Login.module.css
+│   │   │   ├── Main.module.css
+│   │   │   ├── Post.module.css
+│   │   │   └── Signup.module.css
+│   │   │
+│   │   ├── Footer.jsx
+│   │   ├── Header.jsx
+│   │   ├── Login.jsx
+│   │   ├── Main.jsx
+│   │   ├── Post.jsx
+│   │   └── Signup.jsx
 │   │
 │   ├── services/
 │   │   └── apiService.js
 │   │
 │   ├── App.js
-│   ├── index.js
-│   └── styles.css
+│   └── index.js
 │
 ├── .gitignore
 ├── package.json
 └── README.md
-```
-
-### 리액트 애플리케이션 구조도
-```
-+------------------+
-|   index.html     |   <-- Root HTML file for the app
-+------------------+
-          |
-          v
-+------------------+
-|   index.js       |   <-- Entry point for React
-|   - Renders the  |
-|     App component|
-+------------------+
-          |
-          v
-+------------------+
-|   App.js         |   <-- Root component of the application
-|   - Defines      |
-|     Routes       |
-|   - Contains     |
-|     Header, Main |
-|     Content,     |
-|     and Footer   |
-+------------------+
-          |
-          v
-+------------------+
-|   Router         |
-|   - Manages route| 
-|     and page     |   
-|     transitions  |
-+------------------+
-          |
-          v
-+------------------+        +------------------+
-|   HomePage.js    |        |   AboutPage.js   |   <-- Page components
-|   - Combines     |        |   - Combines     |   <-- Combines various components
-|     Header, Main |        |     Header, Main |
-|     Content, and |        |     Content, and |
-|     Footer       |        |     Footer       |
-+------------------+        +------------------+
-          |
-          v
-+------------------+
-|   Header.js      |   <-- Component for Header
-+------------------+
-|   Footer.js      |   <-- Component for Footer
-+------------------+
-|   MainContent.js |   <-- Component for Main Content
-+------------------+
-|   GetJsonComp.js |   <-- Example of a reusable component
-+------------------+
-          |
-          v
-+------------------+
-|   apiService.js  |   <-- Service for fetching and processing data
-+------------------+
-
 ```
