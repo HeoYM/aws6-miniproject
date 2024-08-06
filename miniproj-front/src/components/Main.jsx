@@ -7,10 +7,10 @@ function Main({ posts }) {
             <table className={styles.table}>
                 <thead>
                 <tr>
-                    <th>작성자</th>
-                    <th>내용</th>
-                    <th>이미지</th>
-                    <th>작성 날짜</th>
+                    <th className={styles.usernameHeader}>작성자</th>
+                    <th className={styles.contentHeader}>내용</th>
+                    <th className={styles.imageHeader}>이미지</th>
+                    <th className={styles.dateHeader}>작성 날짜</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -21,7 +21,9 @@ function Main({ posts }) {
                         <td className={styles.imageCell}>
                             {post.image && <img src={URL.createObjectURL(post.image)} alt="첨부 이미지" className={styles.image} />}
                         </td>
-                        <td className={styles.date}>{post.date}</td>
+                        <td className={styles.date}>
+                            {post.date.split(' ')[0] + ' ' + post.date.split(' ')[1] + ' ' + post.date.split(' ')[2] + ' ' + post.date.split(' ')[4]}
+                        </td>
                     </tr>
                 ))}
                 </tbody>
