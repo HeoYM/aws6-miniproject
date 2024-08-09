@@ -13,8 +13,9 @@ export async function loginUser(username, password) {
             },
         });
 
-        // JWT 토큰을 로컬 스토리지에 저장
+        // JWT 토큰과 사용자 정보를 로컬 스토리지에 저장
         localStorage.setItem('token', response.data.token);
+        localStorage.setItem('username', response.data.username);
         return response.data; // 토큰이 포함된 응답 데이터 반환
     } catch (error) {
         console.error('Error:', error);
