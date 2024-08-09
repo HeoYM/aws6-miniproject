@@ -29,3 +29,17 @@ nav a:hover {
         opacity: 1;
     }
 }
+
+.logoutButton {
+    background: none;
+    border: none;
+    color: inherit;
+    cursor: pointer;
+    font: inherit;
+    text-decoration: underline;
+    margin-left: 10px;
+}
+
+.logoutButton:hover {
+    text-decoration: none;
+}

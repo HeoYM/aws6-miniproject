@@ -1,13 +1,20 @@
 import React, { useState } from 'react';
 import styles from './css/Signup.module.css';
+import { signupUser } from '../services/Signup';  // 서비스 파일에서 함수 import
 
 function Signup() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        // 회원가입 로직 추가 예정
+
+        try {
+            await signupUser(username, password);  // 서비스 함수 호출
+            alert('회원가입 성공');
+        } catch (error) {
+            alert('회원가입 실패: ' + error.message);
+        }
     };
 
     return (
