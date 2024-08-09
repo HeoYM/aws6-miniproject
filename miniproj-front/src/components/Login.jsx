@@ -1,13 +1,23 @@
 import React, { useState } from 'react';
 import styles from './css/Login.module.css';
+import { loginUser } from '../services/Login';
 
 function Login() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        // 로그인 로직 추가 예정
+
+        try {
+            const data = await loginUser(username, password);  // 서비스 함수 호출
+            alert('로그인 성공');
+
+            console.log('JWT Token:', data.token);
+            window.location.href = '/Main';
+        } catch (error) {
+            alert('로그인 실패: ' + error.message);
+        }
     };
 
     return (
