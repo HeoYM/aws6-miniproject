@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import Main from './components/Main';
 import Post from './components/Post';
 import Login from './components/Login';
@@ -21,7 +21,9 @@ function App() {
                 <Header />
                 <main className={styles.mainContent}>
                     <Routes>
-                        <Route path="/" element={<Main posts={posts} />} />
+                        {/* Redirect from '/' to '/main' */}
+                        <Route path="/" element={<Navigate to="/main" />} />
+                        <Route path="/main" element={<Main posts={posts} />} />
                         <Route path="/post" element={<Post addPost={addPost} />} />
                         <Route path="/login" element={<Login />} />
                         <Route path="/signup" element={<Signup />} />
