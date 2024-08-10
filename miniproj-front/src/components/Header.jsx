@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import styles from './css/Header.module.css';
 import { logout } from '../services/Logout';
 
@@ -11,19 +11,17 @@ function Header() {
         <header className={styles.header}>
             <h1>[AWS 6기] 4조 Version 1</h1>
             <nav>
-                <Link to="/">메인 화면</Link> |
+                <NavLink to="/main" className={({ isActive }) => isActive ? styles.active : undefined}>메인 화면</NavLink> |
                 {username ? (
-                    // 세션이 존재하는 경우
                     <>
-                        <Link to="/post">글 작성</Link> |
+                        <NavLink to="/post" className={({ isActive }) => isActive ? styles.active : undefined}>글 작성 </NavLink>|
                         <span>{username}님 환영합니다</span> |
-                        <Link to="/" onClick={logout}>로그아웃</Link>
+                        <NavLink to="/" onClick={logout} className={({ isActive }) => isActive ? styles.active : undefined}>로그아웃</NavLink>
                     </>
                 ) : (
-                    // 세션이 존재하지 않는 경우
                     <>
-                        <Link to="/login">로그인</Link> |
-                        <Link to="/signup">회원가입</Link>
+                        <NavLink to="/login" className={({ isActive }) => isActive ? styles.active : undefined}>로그인</NavLink> |
+                        <NavLink to="/signup" className={({ isActive }) => isActive ? styles.active : undefined}>회원가입</NavLink>
                     </>
                 )}
             </nav>

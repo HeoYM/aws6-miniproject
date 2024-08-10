@@ -21,6 +21,11 @@ nav a:hover {
     color: #0056b3;
 }
 
+nav .active {
+    color: red;
+    font-weight: bold;
+}
+
 @keyframes fadeIn {
     from {
         opacity: 0;
