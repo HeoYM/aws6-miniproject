@@ -1,39 +1,48 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import { submitPost } from '../services/Post'; // 게시글 생성 함수
+import { updatePost } from '../services/Edit'; // 게시글 수정 함수
+import { fetchUserData } from '../services/UserService'; // 사용자 정보 가져오기 함수
 import styles from './css/Post.module.css';
 
 const Post = () => {
-    const location = useLocation();  // 리다이렉트된 데이터 접근
+    const location = useLocation();
     const navigate = useNavigate();
-    const [content, setContent] = useState('');  // 본문 내용을 관리하는 상태
-    const [image, setImage] = useState(null);  // 첨부 이미지를 관리하는 상태
+    const [username, setUsername] = useState('');
+    const [content, setContent] = useState('');
+    const [image, setImage] = useState(null);
 
-    // 컴포넌트가 처음 렌더링될 때, location.state에 전달된 데이터를 사용해 상태를 초기화합니다.
     useEffect(() => {
+        const loadUserData = async () => {
+            try {
+                const user = await fetchUserData();
+                setUsername(user);
+            } catch (error) {
+                console.error('Failed to fetch user data:', error);
+            }
+        };
+
+        loadUserData();
+
         if (location.state && location.state.post) {
-            setContent(location.state.post.content);  // 기존 게시글의 본문 내용 설정
-            setImage(location.state.post.image);  // 기존 게시글의 이미지 설정
+            setContent(location.state.post.content);
+            setImage(location.state.post.image);
         }
     }, [location.state]);
 
-    // 폼이 제출되었을 때 호출됩니다.
     const handleSubmit = async (e) => {
-        e.preventDefault();  // 기본 폼 제출 동작 방지
+        e.preventDefault();
 
         try {
-            const updatedPost = {
-                content,
-                image,
-                date: new Date().toLocaleString(),  // 수정된 시간으로 업데이트
-            };
-
-            // 백엔드로 수정된 데이터 전송 (ID 기반)
-            await axios.put(`http://your-springboot-server/api/posts/${location.state.post.id}`, updatedPost);
-            navigate('/');  // 수정 후 메인 화면으로 리다이렉트
+            if (location.state && location.state.post) {
+                await updatePost(location.state.post.id, content, image); // 수정
+            } else {
+                await submitPost({ username, content, image }); // 등록
+            }
+            navigate('/');
         } catch (error) {
-            console.error('Error updating post:', error);
-            alert('게시글 수정 실패: ' + error.message);
+            console.error('Error submitting post:', error);
+            alert('게시글 처리 실패: ' + error.message);
         }
     };
 
@@ -41,7 +50,7 @@ const Post = () => {
         <form onSubmit={handleSubmit}>
             <div className={styles['form-group']}>
                 <label>작성자</label>
-                <input type="text" value={location.state.post.username} readOnly />
+                <input type="text" value={username} readOnly />
             </div>
             <div className={styles['form-group']}>
                 <label>본문</label>
@@ -51,7 +60,9 @@ const Post = () => {
                 <label>첨부 이미지</label>
                 <input type="file" onChange={(e) => setImage(e.target.files[0])} />
             </div>
-            <button type="submit" className={styles.button}>완료</button>
+            <button type="submit" className={styles.button}>
+                {location.state && location.state.post ? '수정 완료' : '등록'}
+            </button>
         </form>
     );
 };

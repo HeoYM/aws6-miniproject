@@ -1,18 +1,25 @@
-// services/Post.js
 import axios from 'axios';
+import { fetchUserData } from './UserService'; // UserService에서 사용자 정보 가져오기
 
-// 게시글 생성 함수 (기존 코드)
-export async function createPost(postData) {
+// 게시글 생성 및 데이터 준비 함수
+export async function preparePostData(content, image) {
+    const username = await fetchUserData(); // 로그인된 사용자 이름 가져오기
     const formData = new FormData();
-    formData.append('username', postData.username);
-    formData.append('content', postData.content);
-    if (postData.image) {
-        formData.append('image', postData.image);
+    formData.append('username', username);
+    formData.append('content', content);
+    if (image) {
+        formData.append('image', image);
     }
-    formData.append('date', postData.date);
+    formData.append('date', new Date().toLocaleString());
 
+    return formData;
+}
+
+// 게시글 등록 함수
+export async function submitPost(content, image) {
     try {
-        const response = await axios.post('http://your-springboot-server/api/posts', formData, {
+        const postData = await preparePostData(content, image); // 게시글 데이터 준비
+        const response = await axios.post('http://your-springboot-server/api/posts', postData, {
             headers: {
                 'Content-Type': 'multipart/form-data',
             },
@@ -22,16 +29,5 @@ export async function createPost(postData) {
     } catch (error) {
         console.error('Error:', error);
         throw new Error(error.response?.data?.message || '게시글 작성 실패');
-    }
-}
-
-// 게시글 조회 함수
-export async function fetchPosts() {
-    try {
-        const response = await axios.get('http://your-springboot-server/api/posts');
-        return response.data; // 서버에서 반환된 데이터를 반환
-    } catch (error) {
-        console.error('Error fetching posts:', error);
-        throw new Error('게시글 조회에 실패했습니다.');
     }
 }
