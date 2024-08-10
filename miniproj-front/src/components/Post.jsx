@@ -1,37 +1,39 @@
 import React, { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import styles from './css/Post.module.css';
-import { createPost } from '../services/Post';  // 서비스 파일에서 함수 import
 
-function Post({ addPost }) {
-    const [username, setUsername] = useState('');
-    const [content, setContent] = useState('');
-    const [image, setImage] = useState(null);
+const Post = () => {
+    const location = useLocation();  // 리다이렉트된 데이터 접근
+    const navigate = useNavigate();
+    const [content, setContent] = useState('');  // 본문 내용을 관리하는 상태
+    const [image, setImage] = useState(null);  // 첨부 이미지를 관리하는 상태
 
-    // 세션 정보에서 사용자 이름을 가져와서 자동으로 설정
+    // 컴포넌트가 처음 렌더링될 때, location.state에 전달된 데이터를 사용해 상태를 초기화합니다.
     useEffect(() => {
-        const sessionUsername = localStorage.getItem('username'); // localStorage에서 사용자 이름 가져오기
-        if (sessionUsername) {
-            setUsername(sessionUsername);
+        if (location.state && location.state.post) {
+            setContent(location.state.post.content);  // 기존 게시글의 본문 내용 설정
+            setImage(location.state.post.image);  // 기존 게시글의 이미지 설정
         }
-    }, []);
+    }, [location.state]);
 
+    // 폼이 제출되었을 때 호출됩니다.
     const handleSubmit = async (e) => {
-        e.preventDefault();
-
-        const newPostData = {
-            username,
-            content,
-            image,
-            date: new Date().toLocaleString(),
-        };
+        e.preventDefault();  // 기본 폼 제출 동작 방지
 
         try {
-            const newPost = await createPost(newPostData);  // 서버에 새 게시글 전송
-            addPost(newPost); // 새 게시글을 리스트에 추가
-            setContent(''); // 폼 초기화
-            setImage(null);
+            const updatedPost = {
+                content,
+                image,
+                date: new Date().toLocaleString(),  // 수정된 시간으로 업데이트
+            };
+
+            // 백엔드로 수정된 데이터 전송 (ID 기반)
+            await axios.put(`http://your-springboot-server/api/posts/${location.state.post.id}`, updatedPost);
+            navigate('/');  // 수정 후 메인 화면으로 리다이렉트
         } catch (error) {
-            alert('게시글 작성 실패: ' + error.message);
+            console.error('Error updating post:', error);
+            alert('게시글 수정 실패: ' + error.message);
         }
     };
 
@@ -39,7 +41,7 @@ function Post({ addPost }) {
         <form onSubmit={handleSubmit}>
             <div className={styles['form-group']}>
                 <label>작성자</label>
-                <input type="text" value={username} readOnly />
+                <input type="text" value={location.state.post.username} readOnly />
             </div>
             <div className={styles['form-group']}>
                 <label>본문</label>
@@ -49,9 +51,9 @@ function Post({ addPost }) {
                 <label>첨부 이미지</label>
                 <input type="file" onChange={(e) => setImage(e.target.files[0])} />
             </div>
-            <button type="submit" className={styles.button}>작성</button>
+            <button type="submit" className={styles.button}>완료</button>
         </form>
     );
-}
+};
 
 export default Post;

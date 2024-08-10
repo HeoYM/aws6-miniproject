@@ -10,6 +10,7 @@ function Header() {
     return (
         <header className={styles.header}>
             <h1>[AWS 6기] 4조 Version 1</h1>
+            <Link to="/">메인 화면</Link> | <Link to="/post">글 작성</Link> | <Link to="/login">로그인</Link> | <Link to="/signup">회원가입</Link>
             <nav>
                 <Link to="/">메인 화면</Link> |
                 {username ? (
