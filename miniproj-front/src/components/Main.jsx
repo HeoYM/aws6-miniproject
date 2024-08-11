@@ -1,81 +1,95 @@
-// components/Main.jsx
-
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios'; // axios 추가
-import { fetchPosts } from '../services/Main'; // 조회 함수
-import { deletePost } from '../services/Delete'; // 삭제 함수
+import React, { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { submitPost, updatePost } from '../services/postService';
+import { fetchUserData } from '../services/userService';
 import styles from './css/Main.module.css';
 
-const Main = () => {
-    const [posts, setPosts] = useState([]);
+const Post = () => {
+    const location = useLocation();
     const navigate = useNavigate();
-    const currentUserId = localStorage.getItem('userId'); // 현재 로그인된 사용자 ID
+    const [username, setUsername] = useState('');
+    const [content, setContent] = useState('');
+    const [image, setImage] = useState(null);
 
     useEffect(() => {
-        const getPosts = async () => {
+        const loadUserData = async () => {
             try {
-                const data = await fetchPosts();
-                setPosts(data);
+                const user = await fetchUserData(); // 사용자 정보 로드
+                setUsername(user);
             } catch (error) {
-                console.error('Error fetching posts:', error);
+                console.error('Failed to fetch user data:', error);
             }
         };
 
-        getPosts();
-    }, []);
+        loadUserData();
 
-    // 사용자가 '수정' 버튼을 클릭했을 때 호출됩니다.
-    const handleEdit = async (postId) => {
-        try {
-            const response = await axios.get(`http://your-springboot-server/api/posts/${postId}`);
-            navigate('/edit', { state: { post: response.data } }); // 글 작성 페이지로 리다이렉트하며 데이터 전달
-        } catch (error) {
-            console.error('Error fetching post for editing:', error);
+        if (location.state && location.state.post) {
+            setContent(location.state.post.content);
+            setImage(location.state.post.image);
+        }
+    }, [location.state]);
+
+    const validateImage = (file) => {
+        const allowedFormats = ['image/jpeg', 'image/png', 'image/gif'];
+        const maxSizeInBytes = 5 * 1024 * 1024; // 5MB
+
+        if (!allowedFormats.includes(file.type)) {
+            alert('지원되는 이미지 포맷은 JPEG, PNG, GIF입니다.');
+            return false;
+        }
+
+        if (file.size > maxSizeInBytes) {
+            alert('이미지 파일 크기는 5MB 이하이어야 합니다.');
+            return false;
+        }
+
+        return true;
+    };
+
+    const handleImageChange = (e) => {
+        const file = e.target.files[0];
+        if (file && validateImage(file)) {
+            setImage(file);
+        } else {
+            setImage(null);
         }
     };
 
-    // 사용자가 '삭제' 버튼을 클릭했을 때 호출됩니다.
-    const handleDelete = async (postId, postAuthorId) => {
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
         try {
-            await deletePost(postId, currentUserId, postAuthorId);
-            setPosts(posts.filter(post => post.id !== postId));
+            if (location.state && location.state.post) {
+                await updatePost(location.state.post.id, { content, image });
+            } else {
+                await submitPost(content, image);
+            }
+            navigate('/'); // 성공 시 메인 페이지로 이동
         } catch (error) {
-            console.error('Error deleting post:', error);
+            console.error('Error submitting post:', error);
+            alert('게시글 처리 실패: ' + error.message);
         }
     };
 
     return (
-        <div className={styles.board}>
-            <table className={styles.table}>
-                <thead>
-                <tr>
-                    <th>작성자</th>
-                    <th>내용</th>
-                    <th>이미지</th>
-                    <th>작성 날짜</th>
-                    <th>수정/삭제</th>
-                </tr>
-                </thead>
-                <tbody>
-                {posts.map((post) => (
-                    <tr key={post.id}>
-                        <td>{post.username}</td>
-                        <td>{post.content}</td>
-                        <td>
-                            {post.image && <img src={post.image} alt="post" className={styles.image} />}
-                        </td>
-                        <td>{post.date}</td>
-                        <td>
-                            <button onClick={() => handleEdit(post.id)}>수정</button>
-                            <button onClick={() => handleDelete(post.id, post.userId)}>삭제</button>
-                        </td>
-                    </tr>
-                ))}
-                </tbody>
-            </table>
-        </div>
+        <form onSubmit={handleSubmit}>
+            <div className={styles['form-group']}>
+                <label>작성자</label>
+                <input type="text" value={username} readOnly />
+            </div>
+            <div className={styles['form-group']}>
+                <label>본문</label>
+                <textarea value={content} onChange={(e) => setContent(e.target.value)} required />
+            </div>
+            <div className={styles['form-group']}>
+                <label>첨부 이미지</label>
+                <input type="file" onChange={handleImageChange} />
+            </div>
+            <button type="submit" className={styles.button}>
+                {location.state && location.state.post ? '수정 완료' : '등록'}
+            </button>
+        </form>
     );
 };
 
-export default Main;
+export default Post;

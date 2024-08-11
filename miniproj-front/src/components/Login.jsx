@@ -1,20 +1,20 @@
 import React, { useState } from 'react';
 import styles from './css/Login.module.css';
-import { loginUser } from '../services/Login';
+import { loginUser } from '../services/auth';
+import { useNavigate } from 'react-router-dom';
 
 function Login() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         try {
-            const data = await loginUser(username, password);  // 서비스 함수 호출
+            const data = await loginUser(username, password);
             alert('로그인 성공');
-
-            console.log('JWT Token:', data.token);
-            window.location.href = '/Main';
+            navigate('/Main');
         } catch (error) {
             alert('로그인 실패: ' + error.message);
         }

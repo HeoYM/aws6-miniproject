@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { submitPost } from '../services/Post'; // 게시글 생성 함수
-import { updatePost } from '../services/Edit'; // 게시글 수정 함수
-import { fetchUserData } from '../services/UserService'; // 사용자 정보 가져오기 함수
+import { submitPost, updatePost } from '../services/postService';
+import { fetchUserData } from '../services/userService'; // 유저 정보 로딩
 import styles from './css/Post.module.css';
 
 const Post = () => {
@@ -12,6 +11,7 @@ const Post = () => {
     const [content, setContent] = useState('');
     const [image, setImage] = useState(null);
 
+    // 초기 데이터 로드 및 편집 모드 확인
     useEffect(() => {
         const loadUserData = async () => {
             try {
@@ -30,16 +30,45 @@ const Post = () => {
         }
     }, [location.state]);
 
+    // 이미지 파일 유효성 검사
+    const validateImage = (file) => {
+        const allowedFormats = ['image/jpeg', 'image/png', 'image/gif'];
+        const maxSizeInBytes = 5 * 1024 * 1024; // 5MB
+
+        if (!allowedFormats.includes(file.type)) {
+            alert('지원되는 이미지 포맷은 JPEG, PNG, GIF입니다.');
+            return false;
+        }
+
+        if (file.size > maxSizeInBytes) {
+            alert('이미지 파일 크기는 5MB 이하이어야 합니다.');
+            return false;
+        }
+
+        return true;
+    };
+
+    // 이미지 파일 변경 핸들러
+    const handleImageChange = (e) => {
+        const file = e.target.files[0];
+        if (file && validateImage(file)) {
+            setImage(file);
+        } else {
+            setImage(null);
+        }
+    };
+
+    // 폼 제출 핸들러
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         try {
             if (location.state && location.state.post) {
-                await updatePost(location.state.post.id, content, image); // 수정
+                await updatePost(location.state.post.id, { content, image });
             } else {
-                await submitPost({ username, content, image }); // 등록
+                await submitPost(content, image);
             }
-            navigate('/');
+            navigate('/'); // 성공 시 메인 페이지로 이동
         } catch (error) {
             console.error('Error submitting post:', error);
             alert('게시글 처리 실패: ' + error.message);
@@ -58,7 +87,7 @@ const Post = () => {
             </div>
             <div className={styles['form-group']}>
                 <label>첨부 이미지</label>
-                <input type="file" onChange={(e) => setImage(e.target.files[0])} />
+                <input type="file" onChange={handleImageChange} />
             </div>
             <button type="submit" className={styles.button}>
                 {location.state && location.state.post ? '수정 완료' : '등록'}
