@@ -1,10 +1,13 @@
 import api from './api';
 import { fetchUserData } from './userService';
 
-export async function fetchPosts() {
+export async function fetchPosts(page = 0, size = 10) {
     try {
-        const response = await api.get('/posts');
-        return response.data;
+        const response = await api.get(`/posts?page=${page}&size=${size}`);
+        return {
+            data: response.data.content,
+            totalPages: response.data.totalPages,
+        };
     } catch (error) {
         console.error('Error fetching posts:', error);
         throw error;
@@ -61,16 +64,13 @@ export async function updatePost(postId, updatedPost) {
     }
 }
 
-export async function deletePost(postId, postAuthorId) {
+export async function deletePost(postId) {
     const currentUserId = localStorage.getItem('userId');
 
-    if (currentUserId !== postAuthorId) {
-        alert("작성자만 글을 삭제할 수 있습니다.");
-        return;
-    }
-
     try {
-        await api.put(`/posts/${postId}/delete`);
+        await api.delete(`/posts/${postId}`, {
+            headers: { 'Authorization': `Bearer ${currentUserId}` },
+        });
     } catch (error) {
         console.error('Error deleting post:', error);
         throw error;

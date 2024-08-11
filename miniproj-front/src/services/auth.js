@@ -18,9 +18,9 @@ export async function loginUser(username, password) {
 export function logout() {
     localStorage.removeItem('token');
     localStorage.removeItem('username');
-    localStorage.removeItem('userId'); // userId도 제거
+    localStorage.removeItem('userId');
     alert('로그아웃 되었습니다.');
-    window.location.href = '/login';
+    // 로그아웃 후 페이지 이동은 컴포넌트에서 처리
 }
 
 export async function signupUser(username, password) {

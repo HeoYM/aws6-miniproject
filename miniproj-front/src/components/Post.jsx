@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { submitPost, updatePost } from '../services/postService';
-import { fetchUserData } from '../services/userService'; // 유저 정보 로딩
+import { fetchUserData } from '../services/userService';
 import styles from './css/Post.module.css';
 
 const Post = () => {
@@ -11,7 +11,6 @@ const Post = () => {
     const [content, setContent] = useState('');
     const [image, setImage] = useState(null);
 
-    // 초기 데이터 로드 및 편집 모드 확인
     useEffect(() => {
         const loadUserData = async () => {
             try {
@@ -30,7 +29,6 @@ const Post = () => {
         }
     }, [location.state]);
 
-    // 이미지 파일 유효성 검사
     const validateImage = (file) => {
         const allowedFormats = ['image/jpeg', 'image/png', 'image/gif'];
         const maxSizeInBytes = 5 * 1024 * 1024; // 5MB
@@ -48,17 +46,15 @@ const Post = () => {
         return true;
     };
 
-    // 이미지 파일 변경 핸들러
     const handleImageChange = (e) => {
         const file = e.target.files[0];
         if (file && validateImage(file)) {
             setImage(file);
         } else {
-            setImage(null);
+            setImage(null); // 이미지 파일이 유효하지 않은 경우 null로 설정
         }
     };
 
-    // 폼 제출 핸들러
     const handleSubmit = async (e) => {
         e.preventDefault();
 

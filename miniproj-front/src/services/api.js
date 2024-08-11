@@ -8,7 +8,6 @@ const api = axios.create({
     },
 });
 
-// Authorization 헤더를 자동으로 추가하는 인터셉터
 api.interceptors.request.use(
     config => {
         const token = localStorage.getItem('token');
@@ -20,7 +19,6 @@ api.interceptors.request.use(
     error => Promise.reject(error)
 );
 
-// 응답 인터셉터: 전역 에러 처리 및 401 Unauthorized 처리
 api.interceptors.response.use(
     response => response,
     error => {

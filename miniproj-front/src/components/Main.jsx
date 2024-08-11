@@ -5,21 +5,24 @@ import styles from './css/Main.module.css';
 
 const Main = () => {
     const [posts, setPosts] = useState([]);
+    const [page, setPage] = useState(0);
+    const [totalPages, setTotalPages] = useState(0);
     const navigate = useNavigate();
     const currentUserId = localStorage.getItem('userId');
 
     useEffect(() => {
         const getPosts = async () => {
             try {
-                const data = await fetchPosts();
+                const { data, totalPages } = await fetchPosts(page, 10);
                 setPosts(data);
+                setTotalPages(totalPages);
             } catch (error) {
                 console.error('Error fetching posts:', error);
             }
         };
 
         getPosts();
-    }, []);
+    }, [page]);
 
     const handleEdit = (post) => {
         navigate('/post', { state: { post } });
@@ -36,6 +39,12 @@ const Main = () => {
             setPosts(posts.filter(post => post.id !== postId));
         } catch (error) {
             console.error('Error deleting post:', error);
+        }
+    };
+
+    const handlePageChange = (newPage) => {
+        if (newPage >= 0 && newPage < totalPages) {
+            setPage(newPage);
         }
     };
 
@@ -61,13 +70,40 @@ const Main = () => {
                         </td>
                         <td>{post.date}</td>
                         <td>
-                            <button onClick={() => handleEdit(post)}>수정</button>
-                            <button onClick={() => handleDelete(post.id, post.userId)}>삭제</button>
+                            {currentUserId === post.userId && (
+                                <>
+                                    <button onClick={() => handleEdit(post)}>수정</button>
+                                    <button onClick={() => handleDelete(post.id, post.userId)}>삭제</button>
+                                </>
+                            )}
                         </td>
                     </tr>
                 ))}
                 </tbody>
             </table>
+            <div className={styles.pagination}>
+                <button
+                    onClick={() => handlePageChange(page - 1)}
+                    disabled={page === 0}
+                >
+                    이전
+                </button>
+                {Array.from({ length: totalPages }, (_, index) => (
+                    <button
+                        key={index}
+                        onClick={() => handlePageChange(index)}
+                        className={page === index ? styles.activePage : ''}
+                    >
+                        {index + 1}
+                    </button>
+                ))}
+                <button
+                    onClick={() => handlePageChange(page + 1)}
+                    disabled={page === totalPages - 1}
+                >
+                    다음
+                </button>
+            </div>
         </div>
     );
 };

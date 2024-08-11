@@ -1,11 +1,16 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import styles from './css/Header.module.css';
 import { logout } from '../services/auth';
 
 function Header() {
-    // 로컬 저장소에서 사용자 이름을 가져옴, 기본값을 빈 문자열로 설정
+    const navigate = useNavigate();
     const username = localStorage.getItem('username') || '';
+
+    const handleLogout = () => {
+        logout();
+        navigate('/login'); // 로그아웃 후 로그인 페이지로 리디렉션
+    };
 
     return (
         <header className={styles.header}>
@@ -13,14 +18,12 @@ function Header() {
             <nav>
                 <Link to="/">메인 화면</Link> |
                 {username ? (
-                    // 사용자가 로그인한 경우
                     <>
                         <Link to="/post">글 작성</Link> |
                         <span>{username}님 환영합니다</span> |
-                        <Link to="/" onClick={logout}>로그아웃</Link>
+                        <button onClick={handleLogout} className={styles.logoutButton}>로그아웃</button>
                     </>
                 ) : (
-                    // 사용자가 로그인하지 않은 경우
                     <>
                         <Link to="/login">로그인</Link> |
                         <Link to="/signup">회원가입</Link>

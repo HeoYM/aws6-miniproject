@@ -12,9 +12,9 @@ function Login() {
         e.preventDefault();
 
         try {
-            const data = await loginUser(username, password);
+            await loginUser(username, password);
             alert('로그인 성공');
-            navigate('/Main');
+            navigate('/main'); // 대문자를 소문자로 변경
         } catch (error) {
             alert('로그인 실패: ' + error.message);
         }

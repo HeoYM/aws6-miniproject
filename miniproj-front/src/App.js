@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import Main from './components/Main';
 import Post from './components/Post';
@@ -10,6 +10,13 @@ import styles from './components/css/App.module.css';
 
 function App() {
     const [posts, setPosts] = useState([]);
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+    useEffect(() => {
+        // 로그인 상태를 localStorage에서 확인
+        const token = localStorage.getItem('token');
+        setIsLoggedIn(!!token);
+    }, []);
 
     const addPost = (post) => {
         setPosts([post, ...posts]);
@@ -21,10 +28,10 @@ function App() {
                 <Header />
                 <main className={styles.mainContent}>
                     <Routes>
-                        {/* Redirect from '/' to '/main' */}
                         <Route path="/" element={<Navigate to="/main" />} />
                         <Route path="/main" element={<Main posts={posts} />} />
-                        <Route path="/post" element={<Post addPost={addPost} />} />
+                        {/* 로그인 상태에 따른 접근 제어 */}
+                        <Route path="/post" element={isLoggedIn ? <Post addPost={addPost} /> : <Navigate to="/login" />} />
                         <Route path="/login" element={<Login />} />
                         <Route path="/signup" element={<Signup />} />
                     </Routes>
