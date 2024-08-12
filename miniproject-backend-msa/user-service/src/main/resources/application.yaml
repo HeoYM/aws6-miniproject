@@ -1,13 +1,13 @@
 server:
-  port: 8021
+  port: 8055
 
 spring:
   application:
-    name: board-service
+    name: user-service
 
   data:
     mongodb:
-      uri: mongodb://board:1234@34.68.101.250:27017/board # MongoDB 연결 문자열
+      uri: mongodb://user:1234@34.68.101.250:27017/user # MongoDB 연결 문자열
 
 eureka:
   instance:

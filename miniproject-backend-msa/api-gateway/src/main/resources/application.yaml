@@ -7,14 +7,18 @@ spring:
   cloud:
     gateway:
       routes:
-#        - id: member-service
-#          uri: lb://member-service
-#          predicates:
-#            - Path=/api/members/**
+        - id: user-service
+          uri: http://localhost:8055
+          predicates:
+            - Path=/user/**
+#          filters:
+#            - StripPrefix=1
         - id: board-service
           uri: http://localhost:8021
           predicates:
             - Path=/board/**
+#          filters:
+#            - StripPrefix=1
 #      default-filters:
 #        - name : GlobalAuthFilter
 
