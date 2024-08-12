@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mongo-configmap
+data:
+  init.js: |
+    db = db.getSiblingDB(process.env.MONGO_INITDB_DATABASE);  // Switch to the database
+    db.createUser({
+      user: process.env.MONGO_INITDB_USER,
+      pwd: process.env.MONGO_INITDB_USER_PASSWORD,
+      roles: [
+        { role: 'readWrite', db: process.env.MONGO_INITDB_DATABASE }
+      ]
+    });
+    db.createCollection('items');
+    db.items.insertMany([
+      { "Id": "현수", "title": "예배 시간 입니다...", "content": "에스파는 신이고, 카리나는 내 세상이야.", "author": "Author 1" },
+      { "Id": 2, "title": "Sample Title 2", "content": "Sample Content 2", "author": "Author 2" }
+    ]);

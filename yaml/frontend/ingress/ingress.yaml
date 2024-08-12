@@ -1,0 +1,24 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: myingress
+  annotations:
+    kubernetes.io/ingress.global-static-ip-name: myip
+    # networking.gke.io/managed-certificates: managed-cert
+    networking.gke.io/v1beta1.FrontendConfig: my-frontend-cfg
+spec:
+  tls:
+  - hosts:
+    - www.ozmohynsk.store
+    secretName: www-ozmo
+  rules:
+  - host: www.ozmohynsk.store
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: react-app-svc
+            port: 
+              number: 80
