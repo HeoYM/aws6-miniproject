@@ -1,0 +1,6 @@
+rootProject.name = 'back-msa'
+include 'board-common'
+include 'member-service'
+include 'board-service'
+include 'discovery-server'
+include 'api-gateway'

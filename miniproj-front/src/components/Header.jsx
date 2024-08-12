@@ -18,12 +18,14 @@ function Header() {
             <nav>
                 <Link to="/">메인 화면</Link> |
                 {username ? (
+                    // 세션이 존재하는 경우
                     <>
                         <Link to="/post">글 작성</Link> |
                         <span>{username}님 환영합니다</span> |
                         <button onClick={handleLogout} className={styles.logoutButton}>로그아웃</button>
                     </>
                 ) : (
+                    // 세션이 존재하지 않는 경우
                     <>
                         <Link to="/login">로그인</Link> |
                         <Link to="/signup">회원가입</Link>
