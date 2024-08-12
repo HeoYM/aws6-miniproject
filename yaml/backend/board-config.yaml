@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: board-config
+  namespace: default
+data:
+  application.yml: |
+    spring:
+      application:
+        name: board-service
+    eureka:
+      client:
+        service-url:
+          defaultZone: http://eureka-server:8761/eureka/
+    mongodb:
+      uri: mongodb://mongo-board:27017/boarddb

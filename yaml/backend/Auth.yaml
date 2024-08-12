@@ -1,0 +1,47 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: auth-service
+spec:
+  selector:
+    app: auth-service
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth-service
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: auth-service
+  template:
+    metadata:
+      labels:
+        app: auth-service
+    spec:
+      containers:
+      - name: auth-service
+        image: your-docker-repo/auth-service:latest
+        ports:
+        - containerPort: 8080  # Auth 서비스가 사용하는 포트
+        env:
+        - name: SPRING_DATA_MONGODB_URI
+          valueFrom:
+            configMapKeyRef:
+              name: auth-config
+              key: mongodb.uri
+        volumeMounts:
+        - name: config-volume
+          mountPath: /config/application.yml
+          subPath: application.yml
+      volumes:
+      - name: config-volume
+        configMap:
+          name: auth-config

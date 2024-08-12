@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: api-gateway-config
+  namespace: default
+data:
+  application.yml: |
+    spring:
+      cloud:
+        gateway:
+          routes:
+          - id: auth-service-route
+            uri: lb://auth-service
+            predicates:
+              - Path=/auth/**
+            filters:
+              - StripPrefix=1
+
+          - id: board-service-route
+            uri: lb://board-service
+            predicates:
+              - Path=/board/**
+            filters:
+              - StripPrefix=1
+
+          - id: user-service-route
+            uri: lb://user-service
+            predicates:
+              - Path=/user/**
+            filters:
+              - StripPrefix=1
+
+    eureka:
+      client:
+        service-url:
+          defaultZone: http://eureka-server:8761/eureka/

@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: user-config
+  namespace: default
+data:
+  application.yml: |
+    spring:
+      application:
+        name: user-service
+    eureka:
+      client:
+        service-url:
+          defaultZone: http://eureka-server:8761/eureka/
+    mongodb:
+      uri: mongodb://mongo-user:27017/userdb
