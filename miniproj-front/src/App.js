@@ -31,7 +31,7 @@ function App() {
                         <Route path="/" element={<Navigate to="/main" />} />
                         <Route path="/main" element={<Main posts={posts} />} />
                         {/* 로그인 상태에 따른 접근 제어 */}
-                        <Route path="/post" element={isLoggedIn ? <Post addPost={addPost} /> : <Navigate to="/login" />} />
+                        <Route path="/posts" element={isLoggedIn ? <Post addPost={addPost} /> : <Navigate to="/login" />} />
                         <Route path="/login" element={<Login />} />
                         <Route path="/signup" element={<Signup />} />
                     </Routes>
